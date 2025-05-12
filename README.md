@@ -52,9 +52,28 @@ dotnet tool install --global GetP4Revisions --version {version}
 이 프로젝트는 GitHub Actions를 사용하여 자동으로 빌드 및 패키지 배포를 수행합니다. 이를 위해 다음과 같은 시크릿을 GitHub 저장소에 설정해야 합니다:
 
 1. `STUDIOBSIDE_PAT`: StudioBside GitHub 조직의 패키지에 액세스할 수 있는 Personal Access Token
-   - GitHub 프로필 → Settings → Developer settings → Personal access tokens → Generate new token
-   - 권한: `read:packages` 
-   - 토큰을 생성한 후 GitHub 저장소의 Settings → Secrets and variables → Actions에서 추가
+
+#### Personal Access Token 생성 방법:
+
+1. **GitHub에 로그인** - StudioBside 조직에 소속된 계정으로 로그인합니다.
+2. **프로필 메뉴** - 우측 상단의 프로필 아이콘을 클릭하고 `Settings`를 선택합니다.
+3. **개발자 설정** - 왼쪽 메뉴 하단에서 `Developer settings`를 클릭합니다.
+4. **Personal Access Token** - `Personal access tokens` → `Tokens (classic)`을 선택합니다.
+5. **새 토큰 생성** - `Generate new token (classic)` 버튼을 클릭합니다.
+6. **토큰 설정**:
+   - `Note`: "P4SourceServer CI/CD" 등 용도를 알 수 있는 이름을 입력합니다.
+   - `Expiration`: 적절한 유효기간을 설정합니다(자동화 용도라면 장기간 권장).
+   - `Scopes`: 최소한 `read:packages` 권한이 필요합니다. 필요에 따라 `repo` 같은 다른 권한도 추가할 수 있습니다.
+7. **토큰 생성** - `Generate token` 버튼을 클릭합니다.
+8. **토큰 저장** - 생성된 토큰을 즉시 안전한 곳에 복사해 저장합니다.
+
+#### GitHub Secrets에 토큰 등록 방법:
+
+1. P4SourceServer 저장소의 `Settings` 탭으로 이동합니다.
+2. 왼쪽 사이드바에서 `Secrets and variables` → `Actions`를 클릭합니다.
+3. `New repository secret` 버튼을 클릭합니다.
+4. 이름은 `STUDIOBSIDE_PAT`로 입력하고, 값에는 앞서 생성한 토큰을 붙여넣습니다.
+5. `Add secret` 버튼을 클릭합니다.
 
 ### 릴리스 생성 방법
 

@@ -23,8 +23,7 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '9.0.x'
-    
-    # NuGet 패키지 캐싱
+      # NuGet 패키지 캐싱
     - name: Cache NuGet packages
       uses: actions/cache@v3
       with:
@@ -32,8 +31,32 @@ jobs:
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
         restore-keys: |
           ${{ runner.os }}-nuget-
-      # NuGet.Config 파일 생성
-    - name: Create NuGet.Config
+          
+    # NuGet.Config 파일 생성
+    - name: Create NuGet.Config for Windows
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        @"
+        <?xml version="1.0" encoding="utf-8"?>
+        <configuration>
+          <packageSources>
+            <clear />
+            <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+            <add key="github" value="https://nuget.pkg.github.com/StudioBside/index.json" />
+          </packageSources>
+          <packageSourceCredentials>
+            <github>
+              <add key="Username" value="${{ github.actor }}" />
+              <add key="ClearTextPassword" value="${{ secrets.STUDIOBSIDE_PAT }}" />
+            </github>
+          </packageSourceCredentials>
+        </configuration>
+        "@ | Out-File -FilePath nuget.config -Encoding utf8
+        
+    - name: Create NuGet.Config for Linux
+      if: runner.os != 'Windows'
+      shell: bash
       run: |
         cat > nuget.config << EOF
         <?xml version="1.0" encoding="utf-8"?>
@@ -45,13 +68,12 @@ jobs:
           </packageSources>
           <packageSourceCredentials>
             <github>
-              <add key="Username" value="\${{ github.actor }}" />
-              <add key="ClearTextPassword" value="\${{ secrets.STUDIOBSIDE_PAT }}" />
+              <add key="Username" value="${{ github.actor }}" />
+              <add key="ClearTextPassword" value="${{ secrets.STUDIOBSIDE_PAT }}" />
             </github>
           </packageSourceCredentials>
         </configuration>
         EOF
-      shell: bash
         
     - name: Restore dependencies
       run: dotnet restore

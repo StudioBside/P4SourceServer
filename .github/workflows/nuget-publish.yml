@@ -16,8 +16,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '9.0.x'
-      # NuGet.Config 파일 생성
+        dotnet-version: '9.0.x'      # NuGet.Config 파일 생성
     - name: Create NuGet.Config
       run: |
         cat > nuget.config << EOF
@@ -30,8 +29,8 @@ jobs:
           </packageSources>
           <packageSourceCredentials>
             <github>
-              <add key="Username" value="\${{ github.actor }}" />
-              <add key="ClearTextPassword" value="\${{ secrets.STUDIOBSIDE_PAT }}" />
+              <add key="Username" value="${{ github.actor }}" />
+              <add key="ClearTextPassword" value="${{ secrets.STUDIOBSIDE_PAT }}" />
             </github>
           </packageSourceCredentials>
         </configuration>

@@ -17,6 +17,25 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '9.0.x'
+      # NuGet.Config 파일 생성
+    - name: Create NuGet.Config
+      run: |
+        cat > nuget.config << EOF
+        <?xml version="1.0" encoding="utf-8"?>
+        <configuration>
+          <packageSources>
+            <clear />
+            <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+            <add key="github" value="https://nuget.pkg.github.com/StudioBside/index.json" />
+          </packageSources>
+          <packageSourceCredentials>
+            <github>
+              <add key="Username" value="\${{ github.actor }}" />
+              <add key="ClearTextPassword" value="\${{ secrets.STUDIOBSIDE_PAT }}" />
+            </github>
+          </packageSourceCredentials>
+        </configuration>
+        EOF
         
     - name: Restore dependencies
       run: dotnet restore

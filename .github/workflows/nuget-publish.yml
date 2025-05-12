@@ -1,0 +1,48 @@
+name: Publish NuGet Package
+
+on:
+  push:
+    tags:
+      - 'v*'  # v0.0.1 형식의 태그가 붙으면 워크플로우 실행
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Extract version from tag
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+    - name: Update package version in csproj
+      run: |
+        VERSION=${{ steps.get_version.outputs.VERSION }}
+        sed -i "s|<Version>.*</Version>|<Version>$VERSION</Version>|g" GetP4Revisions/GetP4Revisions.csproj
+    
+    - name: Build
+      run: dotnet build GetP4Revisions/GetP4Revisions.csproj --configuration Release --no-restore
+      
+    - name: Create NuGet package
+      run: dotnet pack GetP4Revisions/GetP4Revisions.csproj --configuration Release --no-build
+    
+    - name: Setup NuGet credentials for GitHub Packages
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '9.0.x'
+        source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Publish NuGet package to GitHub Packages
+      run: dotnet nuget push GetP4Revisions/nupkg/GetP4Revisions.*.nupkg --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate

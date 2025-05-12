@@ -5,6 +5,18 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <!-- NuGet 패키지 메타데이터 -->
+    <PackageId>GetP4Revisions</PackageId>
+    <Version>0.0.1</Version>
+    <Authors>Your Name</Authors>
+    <Company>Your Company</Company>
+    <Description>Tool for getting Perforce revisions</Description>
+    <PackageTags>perforce;p4;tool</PackageTags>
+    <!-- .NET 도구 패키지 설정 -->
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>GetP4Revisions</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

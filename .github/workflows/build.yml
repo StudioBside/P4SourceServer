@@ -1,0 +1,54 @@
+name: Build Solution
+
+on:
+  push:
+    branches: [ main, master ]  # 메인 브랜치에 커밋이 푸시될 때마다 실행
+  pull_request:
+    branches: [ main, master ]  # 메인 브랜치로 PR이 작성될 때마다 실행
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+      fail-fast: false  # 하나의 빌드가 실패해도 다른 빌드는 계속 진행
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '9.0.x'
+    
+    # NuGet 패키지 캐싱
+    - name: Cache NuGet packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build solution
+      run: dotnet build --configuration Release --no-restore
+      env:
+        CI: 'true'
+        
+    - name: Build GetP4Revisions (NuGet 패키지 후보)
+      run: dotnet build GetP4Revisions/GetP4Revisions.csproj --configuration Release
+      
+    - name: Test NuGet 패키지 생성
+      run: dotnet pack GetP4Revisions/GetP4Revisions.csproj --configuration Release --no-build
+      
+    - name: Test
+      run: dotnet test --no-build --verbosity normal --configuration Release
+      # 이 단계에서 테스트가 실패하더라도 워크플로우는 계속 진행됩니다. 
+      # 테스트 실패 시 빌드를 중단하고 싶으면 continue-on-error: false로 설정하세요.
+      continue-on-error: true

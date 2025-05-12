@@ -1,5 +1,8 @@
 # P4SourceServer
 
+[![Build Status](https://github.com/USERNAME/P4SourceServer/workflows/Build%20Solution/badge.svg)](https://github.com/StudioBside/P4SourceServer/actions)
+[![GitHub Package Registry](https://github.com/USERNAME/P4SourceServer/workflows/Publish%20NuGet%20Package/badge.svg)](https://github.com/StudioBside/P4SourceServer/packages)
+
 ## GetP4Revisions 도구
 
 이 프로젝트는 Perforce 리비전을 가져오는 도구를 제공합니다.

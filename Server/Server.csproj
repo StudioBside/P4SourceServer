@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <!-- CI 환경에서 Docker 빌드 건너뛰기 -->
+    <DockerDevelopmentMode Condition="'$(CI)' == 'true'">Fast</DockerDevelopmentMode>
   </PropertyGroup>
 
   <ItemGroup>

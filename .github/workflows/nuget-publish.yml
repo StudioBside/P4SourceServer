@@ -16,8 +16,11 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '9.0.x'      # NuGet.Config 파일 생성
+        dotnet-version: '9.0.x'
+        
+    # NuGet.Config 파일 생성
     - name: Create NuGet.Config
+      shell: bash
       run: |
         cat > nuget.config << EOF
         <?xml version="1.0" encoding="utf-8"?>
@@ -60,7 +63,7 @@ jobs:
         dotnet-version: '9.0.x'
         source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
       env:
-        NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NUGET_AUTH_TOKEN: ${{ secrets.STUDIOBSIDE_PAT }}
     
     - name: Publish NuGet package to GitHub Packages
-      run: dotnet nuget push GetP4Revisions/nupkg/GetP4Revisions.*.nupkg --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+      run: dotnet nuget push GetP4Revisions/nupkg/GetP4Revisions.*.nupkg --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --api-key ${{ secrets.STUDIOBSIDE_PAT }} --skip-duplicate

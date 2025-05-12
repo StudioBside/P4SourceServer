@@ -63,7 +63,12 @@ dotnet tool install --global GetP4Revisions --version {version}
 6. **토큰 설정**:
    - `Note`: "P4SourceServer CI/CD" 등 용도를 알 수 있는 이름을 입력합니다.
    - `Expiration`: 적절한 유효기간을 설정합니다(자동화 용도라면 장기간 권장).
-   - `Scopes`: 최소한 `read:packages` 권한이 필요합니다. 필요에 따라 `repo` 같은 다른 권한도 추가할 수 있습니다.
+   - `Scopes`: 다음 권한이 필요합니다:
+     - `read:packages`: 패키지 읽기 권한
+     - `write:packages`: 패키지 쓰기 권한
+     - `delete:packages`: 필요시 패키지 삭제 권한
+     - `workflow`: 워크플로우 실행 권한
+     - `repo`: (private 저장소의 경우) 저장소 접근 권한
 7. **토큰 생성** - `Generate token` 버튼을 클릭합니다.
 8. **토큰 저장** - 생성된 토큰을 즉시 안전한 곳에 복사해 저장합니다.
 
@@ -74,6 +79,21 @@ dotnet tool install --global GetP4Revisions --version {version}
 3. `New repository secret` 버튼을 클릭합니다.
 4. 이름은 `STUDIOBSIDE_PAT`로 입력하고, 값에는 앞서 생성한 토큰을 붙여넣습니다.
 5. `Add secret` 버튼을 클릭합니다.
+
+### 패키지 발행 문제 해결
+
+패키지 발행 시 다음과 같은 오류가 발생할 경우:
+
+```
+warn : Your request could not be authenticated by the GitHub Packages service.
+error: Response status code does not indicate success: 403 (Forbidden).
+```
+
+1. **PAT 권한 확인**: 반드시 `write:packages` 권한이 포함되어 있어야 합니다.
+2. **저장소 설정 확인**: GitHub 저장소 `Settings` -> `Packages` 메뉴에서 패키지 설정이 올바른지 확인합니다.
+3. **조직 정책 확인**: StudioBside 조직에서 패키지 게시 권한이 있는지 확인합니다.
+
+만약 StudioBside 조직에 게시할 권한이 없다면, 본인 소유의 저장소에 게시한 후 StudioBside 조직의 프로젝트에서 참조할 수 있습니다. 이 경우 워크플로우 파일의 `github.repository_owner` 부분을 자신의 GitHub 계정으로 수정하세요.
 
 ### 릴리스 생성 방법
 
